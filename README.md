@@ -31,7 +31,29 @@ Once someone hands you the built **`Social Image Studio Setup.exe`**:
 You can get an OpenAI API key from <https://platform.openai.com/api-keys>. Image
 generation uses your own OpenAI account/credit.
 
-## Building the installer (one-time, on a machine with Node.js)
+## Easiest: let GitHub build the installer for you (no Node.js needed)
+
+This repo includes a GitHub Actions workflow that builds the Windows `.exe`
+automatically on GitHub's servers.
+
+**To download a fresh installer:**
+
+1. Push to the repo (any push to `main` or a `claude/**` branch triggers a build), or
+   go to the **Actions** tab → **Build Windows installer** → **Run workflow**.
+2. Open the finished run, scroll to **Artifacts**, and download
+   **`Social-Image-Studio-Windows`** — it contains the `Setup.exe`.
+
+**To get a permanent download link (a Release):** push a version tag and the workflow
+attaches the `.exe` to a GitHub Release:
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+The Release then appears under the repo's **Releases** with the installer attached.
+
+## Building the installer yourself (on a machine with Node.js)
 
 You need [Node.js 18+](https://nodejs.org) installed.
 
