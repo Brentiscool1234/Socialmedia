@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline';" />
+    <title>Social Image Studio</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span class="logo-dot"></span>
+        <h1>Social Image Studio</h1>
+      </div>
+      <button id="settingsToggle" class="ghost-btn">⚙ Settings</button>
+    </header>
+
+    <!-- Settings drawer -->
+    <section id="settingsPanel" class="settings-panel hidden">
+      <div class="field">
+        <label for="apiKey">OpenAI API key</label>
+        <div class="row">
+          <input id="apiKey" type="password" placeholder="sk-..." autocomplete="off" />
+          <button id="toggleKey" class="ghost-btn" title="Show / hide">👁</button>
+        </div>
+        <p class="hint">Stored only on this PC. Used for every request the app makes.</p>
+      </div>
+      <div class="field">
+        <label for="chatModel">Chat model</label>
+        <input id="chatModel" type="text" placeholder="gpt-4o-mini" />
+      </div>
+      <div class="field">
+        <label for="imageModel">Image model</label>
+        <input id="imageModel" type="text" placeholder="gpt-image-1" />
+      </div>
+      <button id="saveSettings" class="primary-btn">Save settings</button>
+      <span id="settingsStatus" class="status"></span>
+    </section>
+
+    <main class="layout">
+      <!-- Left column: assets + options -->
+      <aside class="sidebar">
+        <h2>Brand assets</h2>
+
+        <div class="asset-block">
+          <div class="asset-head">
+            <span>Logo</span>
+            <button id="pickLogo" class="ghost-btn small">Choose…</button>
+          </div>
+          <div id="logoPreview" class="thumb-row empty">No logo selected</div>
+        </div>
+
+        <div class="asset-block">
+          <div class="asset-head">
+            <span>Reference images</span>
+            <button id="pickRefs" class="ghost-btn small">Add…</button>
+          </div>
+          <div id="refsPreview" class="thumb-row empty">No reference images</div>
+        </div>
+
+        <h2>Output</h2>
+        <div class="field">
+          <label for="size">Format</label>
+          <select id="size">
+            <option value="1024x1024">Square — 1024×1024 (feed)</option>
+            <option value="1024x1536">Portrait — 1024×1536 (story / reel)</option>
+            <option value="1536x1024">Landscape — 1536×1024 (banner)</option>
+            <option value="auto">Auto</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="quality">Quality</label>
+          <select id="quality">
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+            <option value="low">Low</option>
+            <option value="auto">Auto</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="count">How many</label>
+          <select id="count">
+            <option value="1">1 image</option>
+            <option value="2">2 images</option>
+            <option value="3">3 images</option>
+            <option value="4">4 images</option>
+          </select>
+        </div>
+      </aside>
+
+      <!-- Middle column: chat -->
+      <section class="chat-col">
+        <h2>Describe what you want</h2>
+        <div id="chatLog" class="chat-log">
+          <div class="msg assistant">
+            Hi! Tell me about the image you need — the platform, the vibe, any text you
+            want on it, and how your logo should be used. I'll help shape it and then write
+            the final prompt for you.
+          </div>
+        </div>
+        <div class="chat-input">
+          <textarea id="chatBox" rows="2" placeholder="e.g. An Instagram post for our summer sale, bright and playful…"></textarea>
+          <button id="sendChat" class="primary-btn">Send</button>
+        </div>
+      </section>
+
+      <!-- Right column: prompt + results -->
+      <section class="result-col">
+        <h2>Final prompt</h2>
+        <textarea id="promptBox" rows="4" placeholder="The image prompt goes here. Refine it in the chat, or type your own."></textarea>
+        <button id="generate" class="generate-btn">✦ Generate images</button>
+        <div id="genStatus" class="status"></div>
+        <div id="gallery" class="gallery"></div>
+      </section>
+    </main>
+
+    <script src="renderer.js"></script>
+  </body>
+</html>

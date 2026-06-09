@@ -1,0 +1,39 @@
+{
+  "name": "social-image-studio",
+  "productName": "Social Image Studio",
+  "version": "1.0.0",
+  "description": "Generate on-brand social media images from a logo, reference images, and a conversation with AI.",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win",
+    "pack": "electron-builder --dir"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^31.7.7",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.socialimagestudio.app",
+    "productName": "Social Image Studio",
+    "files": [
+      "src/**/*",
+      "assets/**/*"
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Social Image Studio"
+    }
+  }
+}
