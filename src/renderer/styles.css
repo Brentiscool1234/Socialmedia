@@ -92,6 +92,8 @@ textarea { resize: vertical; }
 .sidebar, .chat-col, .result-col { background: var(--bg); padding: 18px; overflow-y: auto; min-height: 0; }
 
 /* Assets */
+.tip { font-size: 12px; line-height: 1.55; color: var(--muted); background: var(--panel); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 8px; padding: 10px 12px; margin-bottom: 16px; }
+.tip strong { color: var(--text); }
 .asset-block { margin-bottom: 16px; }
 .asset-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; font-size: 13px; }
 .checkbox-row { display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; }

@@ -19,6 +19,24 @@ image API. Built with Electron.
 - 🔑 **Your key, your control.** Paste your OpenAI API key once in **Settings**; it's
   stored only on your PC and used for every request the app makes.
 
+## Logo vs. References vs. Products — the three image slots
+
+The app sends your images to the engine with a clear, distinct role for each, so you
+get the result you expect:
+
+| Slot | Role | Use it for |
+| --- | --- | --- |
+| **Logo** | Placed on the design (not distorted or recoloured) | Your brand logo |
+| **Reference images** | **Style & mood inspiration only** — the *look* is copied, not the actual objects | A flyer/photo whose colours, layout or vibe you like |
+| **Product images** | **Your real product, reproduced faithfully** as the hero of the image | Photos of the actual item you're advertising |
+
+Product images are opt-in: tick **"Include product images"** to reveal that uploader.
+
+**Example (a bounce-house rental flyer):** put a flyer whose style you like under
+**References**, and photos of *your actual inflatables* under **Products**. The result
+copies the style you liked while featuring your real units accurately — instead of
+inventing different-looking ones.
+
 ## For non-technical users (the easy path)
 
 Once someone hands you the built **`Social Image Studio Setup.exe`**:
