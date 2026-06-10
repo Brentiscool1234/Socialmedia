@@ -147,7 +147,8 @@ ipcMain.handle('ai:chat', async (_evt, { messages }) => {
       "clarifying questions at a time. When you have enough to work with, write a single, detailed, " +
       "vivid image-generation prompt and wrap ONLY that final prompt between the markers <PROMPT> and " +
       "</PROMPT> so the app can detect it. The prompt should describe composition, style, lighting, " +
-      "colours, where any logo sits, and leave space for text if the user wants text. Keep your chat " +
+      "colours, where any logo sits, and leave space for text if the user wants text. Always keep all " +
+      "text and key elements within safe margins so nothing is cropped at the edges. Keep your chat " +
       "replies brief."
   };
 
@@ -172,15 +173,69 @@ ipcMain.handle('ai:chat', async (_evt, { messages }) => {
 // IPC: generate images
 // ---------------------------------------------------------------------------
 ipcMain.handle('ai:generate', async (_evt, opts) => {
-  const { prompt, logoPath, referencePaths = [], size, quality, count } = opts;
+  const { prompt, logoPath, referencePaths = [], productPaths = [], size, quality, count } = opts;
   const { apiKey, imageModel } = getSettings();
 
   if (!apiKey) throw new Error('No API key set. Add your OpenAI API key in Settings first.');
   if (!prompt || !prompt.trim()) throw new Error('Please enter or generate a prompt first.');
 
+  // Build the ordered image list AND a note that tells the engine the distinct
+  // role of each image, because the API sends one prompt for all images.
+  // Order matters: logo first, then style references, then product images.
   const images = [];
-  if (logoPath) images.push(logoPath);
-  for (const p of referencePaths) images.push(p);
+  const roleParts = [];
+  let idx = 1;
+
+  const rangeLabel = (count) => {
+    if (count === 1) return `image ${idx}`;
+    return `images ${idx}–${idx + count - 1}`;
+  };
+
+  if (logoPath) {
+    roleParts.push(
+      `${rangeLabel(1)} is the BRAND LOGO — place it tastefully on the design without ` +
+        `distorting, recolouring or cropping it`
+    );
+    images.push(logoPath);
+    idx += 1;
+  }
+
+  if (referencePaths.length) {
+    roleParts.push(
+      `${rangeLabel(referencePaths.length)} ${referencePaths.length > 1 ? 'are' : 'is'} ` +
+        `STYLE REFERENCE${referencePaths.length > 1 ? 'S' : ''} — use them ONLY for overall ` +
+        `look, mood, colour palette and composition inspiration; do NOT copy the specific ` +
+        `objects or products shown in them`
+    );
+    for (const p of referencePaths) images.push(p);
+    idx += referencePaths.length;
+  }
+
+  if (productPaths.length) {
+    roleParts.push(
+      `${rangeLabel(productPaths.length)} show the ACTUAL PRODUCT(S) being advertised — ` +
+        `reproduce ${productPaths.length > 1 ? 'them' : 'it'} faithfully and accurately as the ` +
+        `hero of the image, keeping the same shape, colours, proportions, materials and any ` +
+        `branding; this is the real item the customer will receive, so do not invent a ` +
+        `different-looking product`
+    );
+    for (const p of productPaths) images.push(p);
+    idx += productPaths.length;
+  }
+
+  const roleNote = roleParts.length
+    ? `\n\nYou are given ${images.length} input image(s). Their roles: ${roleParts.join('; ')}.`
+    : '';
+
+  // Always enforce a safe area so headlines / logos / contact info are never
+  // cropped at the edges of the generated image.
+  const SAFE_AREA =
+    '\n\nComposition & framing rules (must follow): keep ALL text, the logo, and every ' +
+    'important element fully inside the image with generous safe margins of at least 8% ' +
+    'padding on every side. Nothing — especially headline text at the top and contact / ' +
+    'footer text at the bottom — may touch, overlap, or run off any edge. Size the text to ' +
+    'fit comfortably within these margins; do not crop or cut off any words.';
+  const finalPrompt = prompt.trim() + roleNote + SAFE_AREA;
 
   let response;
 
@@ -188,7 +243,7 @@ ipcMain.handle('ai:generate', async (_evt, opts) => {
     // Use the image-edit endpoint so the logo + references guide the result.
     const form = new FormData();
     form.append('model', imageModel);
-    form.append('prompt', prompt);
+    form.append('prompt', finalPrompt);
     form.append('size', size || 'auto');
     if (quality && quality !== 'auto') form.append('quality', quality);
     form.append('n', String(count || 1));
@@ -211,7 +266,7 @@ ipcMain.handle('ai:generate', async (_evt, opts) => {
       },
       body: JSON.stringify({
         model: imageModel,
-        prompt,
+        prompt: finalPrompt,
         size: size || 'auto',
         ...(quality && quality !== 'auto' ? { quality } : {}),
         n: count || 1

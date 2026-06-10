@@ -5,7 +5,8 @@
 // ---------------------------------------------------------------------------
 const state = {
   logo: null,          // { path, name, dataUrl }
-  refs: [],            // [{ path, name, dataUrl }]
+  refs: [],            // [{ path, name, dataUrl }] — style inspiration only
+  products: [],        // [{ path, name, dataUrl }] — actual products to reproduce
   chat: []             // [{ role, content }]
 };
 
@@ -95,6 +96,31 @@ $('pickRefs').addEventListener('click', async () => {
   if (picked.length) { state.refs.push(...picked); renderRefs(); }
 });
 
+// Product images (opt-in via checkbox)
+function renderProducts() {
+  const el = $('productsPreview');
+  if (state.products.length === 0) {
+    el.className = 'thumb-row empty';
+    el.textContent = 'No product images';
+    return;
+  }
+  el.className = 'thumb-row';
+  el.innerHTML = '';
+  state.products.forEach((p, i) => {
+    el.appendChild(makeThumb(p.dataUrl, () => { state.products.splice(i, 1); renderProducts(); }));
+  });
+}
+
+$('useProducts').addEventListener('change', (e) => {
+  $('productSection').classList.toggle('hidden', !e.target.checked);
+  if (!e.target.checked) { state.products = []; renderProducts(); }
+});
+
+$('pickProducts').addEventListener('click', async () => {
+  const picked = await window.api.pickImages(true);
+  if (picked.length) { state.products.push(...picked); renderProducts(); }
+});
+
 // ---------------------------------------------------------------------------
 // Chat
 // ---------------------------------------------------------------------------
@@ -181,6 +207,7 @@ async function generate() {
       prompt,
       logoPath: state.logo ? state.logo.path : null,
       referencePaths: state.refs.map((r) => r.path),
+      productPaths: $('useProducts').checked ? state.products.map((p) => p.path) : [],
       size: $('size').value,
       quality: $('quality').value,
       count: Number($('count').value)
@@ -232,3 +259,4 @@ $('generate').addEventListener('click', generate);
 loadSettings();
 renderLogo();
 renderRefs();
+renderProducts();

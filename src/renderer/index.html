@@ -52,10 +52,26 @@
 
         <div class="asset-block">
           <div class="asset-head">
-            <span>Reference images</span>
+            <span>Reference images <span class="role-tag">style only</span></span>
             <button id="pickRefs" class="ghost-btn small">Add…</button>
           </div>
           <div id="refsPreview" class="thumb-row empty">No reference images</div>
+        </div>
+
+        <div class="asset-block">
+          <label class="checkbox-row">
+            <input type="checkbox" id="useProducts" />
+            <span>Include product images</span>
+          </label>
+          <p class="hint">Photos of the actual product to feature. The engine is told to
+            reproduce these faithfully — not just as style inspiration.</p>
+          <div id="productSection" class="hidden">
+            <div class="asset-head">
+              <span>Product images <span class="role-tag product">reproduced</span></span>
+              <button id="pickProducts" class="ghost-btn small">Add…</button>
+            </div>
+            <div id="productsPreview" class="thumb-row empty">No product images</div>
+          </div>
         </div>
 
         <h2>Output</h2>
