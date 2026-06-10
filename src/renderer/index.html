@@ -132,7 +132,10 @@
       <section class="result-col">
         <h2>Final prompt</h2>
         <textarea id="promptBox" rows="4" placeholder="The image prompt goes here. Refine it in the chat, or type your own."></textarea>
-        <button id="generate" class="generate-btn">✦ Generate images</button>
+        <div class="gen-row">
+          <button id="generate" class="generate-btn">✦ Generate images</button>
+          <button id="newStyle" class="newstyle-btn" title="Regenerate with a completely different look (keeps your text & product)">🎲 New style</button>
+        </div>
         <div id="genStatus" class="status"></div>
         <div id="gallery" class="gallery"></div>
       </section>

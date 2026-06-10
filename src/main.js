@@ -173,7 +173,7 @@ ipcMain.handle('ai:chat', async (_evt, { messages }) => {
 // IPC: generate images
 // ---------------------------------------------------------------------------
 ipcMain.handle('ai:generate', async (_evt, opts) => {
-  const { prompt, logoPath, referencePaths = [], productPaths = [], size, quality, count } = opts;
+  const { prompt, logoPath, referencePaths = [], productPaths = [], freshStyle, size, quality, count } = opts;
   const { apiKey, imageModel } = getSettings();
 
   if (!apiKey) throw new Error('No API key set. Add your OpenAI API key in Settings first.');
@@ -227,6 +227,32 @@ ipcMain.handle('ai:generate', async (_evt, opts) => {
     ? `\n\nYou are given ${images.length} input image(s). Their roles: ${roleParts.join('; ')}.`
     : '';
 
+  // "New style" forces the engine away from whatever it produced before by
+  // picking a distinctly different visual direction each time.
+  const STYLE_VARIANTS = [
+    'bold modern flat design with strong geometric shapes',
+    'playful hand-drawn cartoon style with chunky outlines',
+    'sleek minimalist layout with lots of negative space',
+    'retro vintage poster aesthetic with aged textures',
+    'vibrant gradient-heavy contemporary style',
+    'elegant premium look with refined serif typography',
+    'energetic comic-book style with halftone textures',
+    'clean corporate style with crisp sans-serif type',
+    'festive bright summer-carnival theme',
+    'high-contrast neon nightlife aesthetic',
+    'collage / cut-paper scrapbook style',
+    'photo-realistic cinematic lighting with dramatic depth'
+  ];
+  let styleNote = '';
+  if (freshStyle) {
+    const pick = STYLE_VARIANTS[Math.floor(Math.random() * STYLE_VARIANTS.length)];
+    styleNote =
+      `\n\nIMPORTANT — use a COMPLETELY FRESH and distinctly different visual style from any ` +
+      `previous version: ${pick}. Significantly change the layout, colour scheme, typography, ` +
+      `backgrounds and overall composition. Keep the same message and headline text, and keep any ` +
+      `product images accurate, but fully reinvent the look so it does not resemble the last result.`;
+  }
+
   // Always enforce a safe area so headlines / logos / contact info are never
   // cropped at the edges of the generated image.
   const SAFE_AREA =
@@ -235,7 +261,7 @@ ipcMain.handle('ai:generate', async (_evt, opts) => {
     'padding on every side. Nothing — especially headline text at the top and contact / ' +
     'footer text at the bottom — may touch, overlap, or run off any edge. Size the text to ' +
     'fit comfortably within these margins; do not crop or cut off any words.';
-  const finalPrompt = prompt.trim() + roleNote + SAFE_AREA;
+  const finalPrompt = prompt.trim() + roleNote + styleNote + SAFE_AREA;
 
   let response;
 

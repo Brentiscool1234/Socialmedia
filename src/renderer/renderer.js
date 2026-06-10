@@ -187,9 +187,10 @@ $('chatBox').addEventListener('keydown', (e) => {
 // ---------------------------------------------------------------------------
 // Generate
 // ---------------------------------------------------------------------------
-async function generate() {
+async function generate({ freshStyle = false } = {}) {
   const status = $('genStatus');
   const btn = $('generate');
+  const styleBtn = $('newStyle');
   const prompt = $('promptBox').value.trim();
 
   if (!prompt) {
@@ -199,8 +200,11 @@ async function generate() {
   }
 
   btn.disabled = true;
+  styleBtn.disabled = true;
   status.className = 'status';
-  status.innerHTML = '<span class="spinner"></span>Generating… this can take 10–30s.';
+  status.innerHTML = freshStyle
+    ? '<span class="spinner"></span>Trying a fresh style… this can take 10–30s.'
+    : '<span class="spinner"></span>Generating… this can take 10–30s.';
 
   try {
     const images = await window.api.generate({
@@ -208,6 +212,7 @@ async function generate() {
       logoPath: state.logo ? state.logo.path : null,
       referencePaths: state.refs.map((r) => r.path),
       productPaths: $('useProducts').checked ? state.products.map((p) => p.path) : [],
+      freshStyle,
       size: $('size').value,
       quality: $('quality').value,
       count: Number($('count').value)
@@ -222,6 +227,7 @@ async function generate() {
     status.textContent = `⚠ ${err.message}`;
   } finally {
     btn.disabled = false;
+    styleBtn.disabled = false;
   }
 }
 
@@ -251,7 +257,8 @@ function renderGallery(images) {
   });
 }
 
-$('generate').addEventListener('click', generate);
+$('generate').addEventListener('click', () => generate());
+$('newStyle').addEventListener('click', () => generate({ freshStyle: true }));
 
 // ---------------------------------------------------------------------------
 // Init

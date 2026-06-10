@@ -61,6 +61,10 @@ button { font-family: inherit; cursor: pointer; border-radius: 8px; }
   color: #fff; border: none; font-weight: 700; font-size: 15px;
 }
 .generate-btn:hover { filter: brightness(1.08); }
+.gen-row { display: flex; gap: 8px; margin-top: 12px; }
+.gen-row .generate-btn { margin-top: 0; flex: 1; }
+.newstyle-btn { margin-top: 0; padding: 13px 16px; background: var(--panel-2); color: var(--text); border: 1px solid var(--border); font-weight: 600; font-size: 14px; white-space: nowrap; }
+.newstyle-btn:hover { background: var(--panel); border-color: var(--accent); }
 button:disabled { opacity: 0.5; cursor: not-allowed; filter: none; }
 
 /* Settings panel */

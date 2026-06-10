@@ -15,6 +15,9 @@ image API. Built with Electron.
   sent along to guide the look.
 - 📐 **Pick the format.** Square (feed), portrait (story/reel) or landscape (banner),
   plus quality and how many to make.
+- 🎲 **New style.** Getting the same look every time? Hit **New style** to regenerate the
+  same ad with a completely different visual treatment (layout, colours, typography) while
+  keeping your message and product accurate.
 - 💾 **Save** any result as a PNG with one click.
 - 🔑 **Your key, your control.** Paste your OpenAI API key once in **Settings**; it's
   stored only on your PC and used for every request the app makes.
